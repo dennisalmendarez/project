@@ -8,7 +8,6 @@ async function fetchTopAnime(page = 1, perPage = 100) {
       Accept: "application/json",
     },
     body: JSON.stringify({
-      // This query asks for a page of anime, sorted by what's currently trending
       query: `
         query ($page: Int, $perPage: Int) {
           Page(page: $page, perPage: $perPage) {
@@ -44,13 +43,12 @@ async function fetchTopAnime(page = 1, perPage = 100) {
       throw new Error("Network response was not ok");
     }
     const jsonResponse = await response.json();
-    return jsonResponse.data.Page.media; // Return the array of anime
+    return jsonResponse.data.Page.media;
   } catch (error) {
     console.error("API Fetch Error:", error);
     alert("Error fetching top anime list. Check the console for details.");
-    return []; // Return an empty array on error
+    return [];
   }
 }
 
-// Export the new function
 export { fetchTopAnime };

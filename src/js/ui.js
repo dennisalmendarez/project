@@ -1,4 +1,3 @@
-// src/js/ui.js
 let fullAnimeList = [];
 
 const modal = document.getElementById("animeModal");
@@ -6,7 +5,6 @@ const modalBody = document.getElementById("modalBody");
 const closeButton = document.querySelector(".close-button");
 const animeContainer = document.getElementById("selection");
 
-// Define which sites are for streaming vs. social
 const STREAMING_SITES = [
   "Crunchyroll",
   "Hulu",
@@ -72,7 +70,6 @@ function handleCardClick(event) {
 }
 
 function populateAndShowModal(anime) {
-  // Filter the links into separate categories
   const streamingLinks = anime.externalLinks.filter((link) =>
     STREAMING_SITES.includes(link.site),
   );
