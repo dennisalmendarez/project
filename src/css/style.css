@@ -30,11 +30,11 @@ body {
 }
 
 .anime-info img {
-  display: block; /* Ensure the image is displayed as a block element */
-  max-width: 100%; /* Ensure the image does not exceed the width of its container */
-  max-height: 100%; /* Ensure the image does not exceed the height of its container */
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
   border-radius: 20px;
-  margin: 0 auto; /* Center the image horizontally */
+  margin: 0 auto;
 }
 
 .anime-info p {
@@ -70,7 +70,7 @@ select#anime {
   font-size: 16px;
   border: 1px solid #ccc;
   border-radius: 5px;
-  appearance: none; /* Remove default appearance */
+  appearance: none;
   background-color: var(--headline-color-on-color);
   color: #555;
   cursor: pointer;
@@ -82,12 +82,10 @@ select#anime option {
   color: #555;
 }
 
-/* Style selected option */
 select#anime option:checked {
   background-color: #f0f0f0;
 }
 
-/* Hide dropdown arrow */
 select#anime::-ms-expand {
   display: none;
 }
@@ -96,8 +94,9 @@ select#anime option {
   background-color: var(--headline-color-on-color);
 }
 
+/* Modal */
 .modal-overlay {
-  display: none; /* Hidden by default */
+  display: none;
   position: fixed;
   z-index: 1000;
   left: 0;
@@ -111,15 +110,15 @@ select#anime option {
 }
 
 .modal-content {
-  background-color: #f0f0f0; /* A light grey for better contrast */
-  color: #333; /* Darker text color */
+  background-color: #f0f0f0;
+  color: #333;
   margin: auto;
   padding: 25px;
   border-radius: 10px;
   width: 90%;
   max-width: 650px;
   position: relative;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
   animation: fadeIn 0.3s;
 }
 
@@ -143,7 +142,6 @@ select#anime option {
   display: flex;
 }
 
-/* New styles for links inside the modal */
 .modal-links a {
   display: inline-flex;
   align-items: center;
@@ -163,19 +161,23 @@ select#anime option {
 }
 
 .modal-links img {
-  width: 20px !important; /* Override inline styles */
+  width: 20px !important;
   height: 20px !important;
   vertical-align: middle;
   margin-right: 8px !important;
 }
 
 @keyframes fadeIn {
-  from {opacity: 0;}
-  to {opacity: 1;}
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .loader {
-  grid-column: 1 / -1; /* Make it span all grid columns */
+  grid-column: 1 / -1;
   text-align: center;
   font-size: 1.5em;
   color: var(--primary-color);

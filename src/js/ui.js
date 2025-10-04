@@ -7,7 +7,16 @@ const closeButton = document.querySelector(".close-button");
 const animeContainer = document.getElementById("selection");
 
 // Define which sites are for streaming vs. social
-const STREAMING_SITES = ["Crunchyroll", "Hulu", "Netflix", "Funimation", "HIDIVE", "Prime Video", "VRV", "YouTube"];
+const STREAMING_SITES = [
+  "Crunchyroll",
+  "Hulu",
+  "Netflix",
+  "Funimation",
+  "HIDIVE",
+  "Prime Video",
+  "VRV",
+  "YouTube",
+];
 const SOCIAL_SITES = ["Instagram", "Twitter", "TikTok", "Facebook"];
 
 export function initializeUIEventListeners() {
@@ -34,7 +43,9 @@ function createAnimeCard(anime) {
   const animeInfoDiv = document.createElement("div");
   animeInfoDiv.classList.add("anime-info");
   animeInfoDiv.dataset.animeId = anime.id;
-  const cleanDescription = anime.description ? anime.description.replace(/<br\s*\/?>/gi, " ") : "No description available.";
+  const cleanDescription = anime.description
+    ? anime.description.replace(/<br\s*\/?>/gi, " ")
+    : "No description available.";
 
   animeInfoDiv.innerHTML = `
     <h3>${anime.title.romaji}</h3>
@@ -62,9 +73,15 @@ function handleCardClick(event) {
 
 function populateAndShowModal(anime) {
   // Filter the links into separate categories
-  const streamingLinks = anime.externalLinks.filter(link => STREAMING_SITES.includes(link.site));
-  const socialLinks = anime.externalLinks.filter(link => SOCIAL_SITES.includes(link.site));
-  const officialSite = anime.externalLinks.find(link => link.site === "Official Site");
+  const streamingLinks = anime.externalLinks.filter((link) =>
+    STREAMING_SITES.includes(link.site),
+  );
+  const socialLinks = anime.externalLinks.filter((link) =>
+    SOCIAL_SITES.includes(link.site),
+  );
+  const officialSite = anime.externalLinks.find(
+    (link) => link.site === "Official Site",
+  );
 
   modalBody.innerHTML = `
     <h2>${anime.title.romaji}</h2>
@@ -81,7 +98,7 @@ function populateAndShowModal(anime) {
 
     <div class="modal-links" style="margin-top: 10px;">
         <strong>Official & Social Links:</strong><br>
-        ${officialSite ? generateLinksHTML([officialSite]) : ''}
+        ${officialSite ? generateLinksHTML([officialSite]) : ""}
         ${generateLinksHTML(socialLinks)}
     </div>
 
@@ -103,9 +120,9 @@ function generateLinksHTML(links) {
     .map(
       (link) => `
         <a href="${link.url}" target="_blank" rel="noopener noreferrer">
-          ${link.icon ? `<img src="${link.icon}" alt="">` : ''}
+          ${link.icon ? `<img src="${link.icon}" alt="">` : ""}
           ${link.site}
-        </a>`
+        </a>`,
     )
     .join("");
 }

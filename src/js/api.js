@@ -5,7 +5,7 @@ async function fetchTopAnime(page = 1, perPage = 100) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Accept": "application/json",
+      Accept: "application/json",
     },
     body: JSON.stringify({
       // This query asks for a page of anime, sorted by what's currently trending
