@@ -1,0 +1,96 @@
+@import url("https://fonts.googleapis.com/css2?family=Crimson+Text:ital@0;1&family=Tenor+Sans&display=swap");
+
+:root {
+  /* change the values below to your colors from your palette */
+  --primary-color: #1f97a6;
+  --secondary-color: #17c3b2;
+  --accent1-color: #fed6d0;
+  --accent2-color: #fef9ef;
+
+  /* change the values below to your chosen font(s) */
+  --heading-font: "Crimson Text", Serif;
+  --paragraph-font: "Tenor Sans", serif, Helvetica;
+
+  /* these colors below should be chosen from among your palette colors above */
+  --headline-color-on-white: #1f97a6; /* headlines on a white background */
+  --headline-color-on-color: #17c3b2; /* headlines on a colored background */
+  --paragraph-color-on-white: #1f97a6; /* paragraph text on a white background */
+  --paragraph-color-on-color: #221818; /* paragraph text on a colored background */
+  --paragraph-background-color: #fed6d0;
+  --nav-link-color: #1f97a6;
+  --nav-background-color: #fed6d0;
+  --nav-hover-link-color: #fef9ef;
+  --nav-hover-background-color: #17c3b2;
+}
+
+body {
+  background-color: var(--accent2-color);
+  margin: 20px auto;
+  max-width: 1600px;
+}
+
+.anime-info img {
+  display: block; /* Ensure the image is displayed as a block element */
+  max-width: 100%; /* Ensure the image does not exceed the width of its container */
+  max-height: 100%; /* Ensure the image does not exceed the height of its container */
+  border-radius: 20px;
+  margin: 0 auto; /* Center the image horizontally */
+}
+
+.anime-info p {
+  text-align: center;
+}
+
+.anime-info h3 {
+  text-align: center;
+  font-size: 20px;
+}
+
+#selection {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  padding-left: 30px;
+  padding-right: 30px;
+  gap: 20px;
+}
+
+.anime-info {
+  border-radius: 30px;
+  padding-left: 10px;
+  padding-right: 10px;
+  background-color: var(--paragraph-background-color);
+}
+
+select#anime {
+  text-align: center;
+  margin-bottom: 20px;
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  appearance: none; /* Remove default appearance */
+  background-color: var(--headline-color-on-color);
+  color: #555;
+  cursor: pointer;
+}
+
+/* Style options */
+select#anime option {
+  background-color: #fff;
+  color: #555;
+}
+
+/* Style selected option */
+select#anime option:checked {
+  background-color: #f0f0f0;
+}
+
+/* Hide dropdown arrow */
+select#anime::-ms-expand {
+  display: none;
+}
+
+select#anime option {
+  background-color: var(--headline-color-on-color);
+}
