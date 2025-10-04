@@ -59,6 +59,7 @@ body {
   padding-left: 10px;
   padding-right: 10px;
   background-color: var(--paragraph-background-color);
+  cursor: pointer;
 }
 
 select#anime {
@@ -93,4 +94,90 @@ select#anime::-ms-expand {
 
 select#anime option {
   background-color: var(--headline-color-on-color);
+}
+
+.modal-overlay {
+  display: none; /* Hidden by default */
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.7);
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: #f0f0f0; /* A light grey for better contrast */
+  color: #333; /* Darker text color */
+  margin: auto;
+  padding: 25px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 650px;
+  position: relative;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  animation: fadeIn 0.3s;
+}
+
+.close-button {
+  color: #aaa;
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close-button:hover,
+.close-button:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.modal-overlay.active {
+  display: flex;
+}
+
+/* New styles for links inside the modal */
+.modal-links a {
+  display: inline-flex;
+  align-items: center;
+  background-color: #65c3e8;
+  color: #333;
+  padding: 5px 10px;
+  margin: 5px 5px 5px 0;
+  border-radius: 5px;
+  text-decoration: none;
+  font-size: 0.9em;
+  transition: background-color 0.2s;
+  border: 1px solid #ddd;
+}
+
+.modal-links a:hover {
+  background-color: #62f3c0;
+}
+
+.modal-links img {
+  width: 20px !important; /* Override inline styles */
+  height: 20px !important;
+  vertical-align: middle;
+  margin-right: 8px !important;
+}
+
+@keyframes fadeIn {
+  from {opacity: 0;}
+  to {opacity: 1;}
+}
+
+.loader {
+  grid-column: 1 / -1; /* Make it span all grid columns */
+  text-align: center;
+  font-size: 1.5em;
+  color: var(--primary-color);
+  padding: 40px;
 }

@@ -1,6 +1,6 @@
-const API_URL = import.meta.env.VITE_API_URL
+const API_URL = import.meta.env.VITE_API_URL;
 
-async function fetchAnimeById(id) {
+async function fetchTopAnime(page = 1, perPage = 100) {
   const options = {
     method: "POST",
     headers: {
@@ -8,38 +8,49 @@ async function fetchAnimeById(id) {
       "Accept": "application/json",
     },
     body: JSON.stringify({
+      // This query asks for a page of anime, sorted by what's currently trending
       query: `
-        query ($id: Int) {
-          Media (id: $id, type: ANIME) {
-            id
-            title { romaji }
-            description(asHtml: false)
-            startDate { year }
-            endDate { year }
-            status
-            episodes
-            genres
-            averageScore
-            popularity
-            source
-            coverImage { large }
+        query ($page: Int, $perPage: Int) {
+          Page(page: $page, perPage: $perPage) {
+            media(type: ANIME, sort: TRENDING_DESC) {
+              id
+              title { romaji }
+              description(asHtml: false)
+              status
+              episodes
+              genres
+              averageScore
+              coverImage { large }
+              externalLinks {
+                id
+                url
+                site
+                icon
+              }
+            }
           }
         }
       `,
-      variables: { id: id },
+      variables: {
+        page: page,
+        perPage: perPage,
+      },
     }),
   };
 
   try {
     const response = await fetch(API_URL, options);
     if (!response.ok) {
-      throw new Error(`Network response was not ok for ID ${id}`);
+      throw new Error("Network response was not ok");
     }
-    return await response.json();
+    const jsonResponse = await response.json();
+    return jsonResponse.data.Page.media; // Return the array of anime
   } catch (error) {
     console.error("API Fetch Error:", error);
-    alert("Error fetching data. Check the console for details.");
+    alert("Error fetching top anime list. Check the console for details.");
+    return []; // Return an empty array on error
   }
 }
 
-export { fetchAnimeById };
+// Export the new function
+export { fetchTopAnime };
