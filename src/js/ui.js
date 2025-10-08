@@ -1,4 +1,7 @@
 let fullAnimeList = [];
+let favorites = new Set(
+  JSON.parse(localStorage.getItem("favorites"))?.map((f) => f.id) || [],
+);
 
 const modal = document.getElementById("animeModal");
 const modalBody = document.getElementById("modalBody");
@@ -17,17 +20,26 @@ const STREAMING_SITES = [
 ];
 const SOCIAL_SITES = ["Instagram", "Twitter", "TikTok", "Facebook"];
 
-export function initializeUIEventListeners() {
+export function initializeUIEventListeners(filterCallback) {
   animeContainer.addEventListener("click", handleCardClick);
   closeButton.addEventListener("click", hideModal);
   modal.addEventListener("click", (event) => {
     if (event.target === modal) hideModal();
   });
+  document
+    .getElementById("genreFilters")
+    .addEventListener("change", filterCallback);
 }
 
 export function renderAnimeCards(animeList) {
   fullAnimeList = animeList;
   animeContainer.innerHTML = "";
+
+  if (animeList.length === 0) {
+    animeContainer.innerHTML =
+      "<p class='no-results'>No anime found matching your criteria.</p>";
+    return;
+  }
 
   animeList.forEach((anime) => {
     if (anime) {
@@ -37,36 +49,98 @@ export function renderAnimeCards(animeList) {
   });
 }
 
+export function renderTop10(animeList) {
+  fullAnimeList = animeList;
+  animeContainer.innerHTML = "";
+  document.getElementById("trendingTitle").classList.add("active");
+  document.getElementById("topTitle").classList.remove("active");
+
+  if (animeList.length === 0) {
+    animeContainer.innerHTML =
+      "<p class='no-results'>Could not load Top 10.</p>";
+    return;
+  }
+
+  const top10Container = document.createElement("div");
+  top10Container.className = "top-10-container";
+
+  animeList.forEach((anime) => {
+    const animeEl = document.createElement("div");
+    animeEl.className = "top-10-item anime-info";
+    animeEl.dataset.animeId = anime.id;
+    const cleanDescription = anime.description
+      ? anime.description.replace(/<br\s*\/?>/gi, " ")
+      : "No description available.";
+
+    animeEl.innerHTML = `
+            <img src="${anime.coverImage.large}" alt="${anime.title.romaji} cover">
+            <div class="top-10-content">
+                <h3>${anime.title.romaji}</h3>
+                <p><strong>Score:</strong> ${anime.averageScore || "N/A"} / 100</p>
+                <p class="description">${cleanDescription.substring(0, 250)}...</p>
+            </div>
+        `;
+    top10Container.appendChild(animeEl);
+  });
+  animeContainer.appendChild(top10Container);
+}
+
 function createAnimeCard(anime) {
   const animeInfoDiv = document.createElement("div");
   animeInfoDiv.classList.add("anime-info");
   animeInfoDiv.dataset.animeId = anime.id;
-  const cleanDescription = anime.description
-    ? anime.description.replace(/<br\s*\/?>/gi, " ")
-    : "No description available.";
+  const isFavorite = favorites.has(anime.id);
 
   animeInfoDiv.innerHTML = `
-    <h3>${anime.title.romaji}</h3>
+    <div class="card-header">
+        <h3>${anime.title.romaji}</h3>
+        <span class="favorite-icon" data-anime-id="${anime.id}">${isFavorite ? "❤️" : "🤍"}</span>
+    </div>
     <img src="${anime.coverImage.large}" alt="${anime.title.romaji} cover">
     <p>
         <strong>Score:</strong> ${anime.averageScore || "N/A"} / 100<br>
         <strong>Genres:</strong> ${anime.genres.join(", ")}<br>
         <strong>Episodes:</strong> ${anime.episodes || "N/A"}<br>
     </p>
-    <p class="description">${cleanDescription.substring(0, 150)}...</p>
     `;
   return animeInfoDiv;
 }
 
 function handleCardClick(event) {
+  if (event.target.classList.contains("favorite-icon")) {
+    toggleFavorite(event);
+    return;
+  }
+
   const card = event.target.closest(".anime-info");
   if (card && card.dataset.animeId) {
     const animeId = parseInt(card.dataset.animeId, 10);
-    const animeData = fullAnimeList.find((item) => item.id === animeId);
+    const animeData =
+      fullAnimeList.find((item) => item.id === animeId) ||
+      JSON.parse(localStorage.getItem("favorites"))?.find(
+        (item) => item.id === animeId,
+      );
     if (animeData) {
       populateAndShowModal(animeData);
     }
   }
+}
+
+function toggleFavorite(event) {
+  const animeId = parseInt(event.target.dataset.animeId, 10);
+  const animeData = fullAnimeList.find((item) => item.id === animeId);
+  let favsFromStorage = JSON.parse(localStorage.getItem("favorites")) || [];
+
+  if (favorites.has(animeId)) {
+    favorites.delete(animeId);
+    favsFromStorage = favsFromStorage.filter((fav) => fav.id !== animeId);
+    event.target.textContent = "🤍";
+  } else {
+    favorites.add(animeId);
+    favsFromStorage.push(animeData);
+    event.target.textContent = "❤️";
+  }
+  localStorage.setItem("favorites", JSON.stringify(favsFromStorage));
 }
 
 function populateAndShowModal(anime) {
@@ -79,30 +153,49 @@ function populateAndShowModal(anime) {
   const officialSite = anime.externalLinks.find(
     (link) => link.site === "Official Site",
   );
+  const isFavorite = favorites.has(anime.id);
 
   modalBody.innerHTML = `
     <h2>${anime.title.romaji}</h2>
+    <button class="favorite-btn-modal" data-anime-id="${anime.id}">${isFavorite ? "Remove from Favorites ❤️" : "Add to Favorites 🤍"}</button>
     <img src="${anime.coverImage.large}" alt="${anime.title.romaji} cover" style="max-width: 200px; float: left; margin-right: 20px; border-radius: 8px;">
     <p><strong>Score:</strong> ${anime.averageScore || "N/A"} / 100</p>
     <p><strong>Status:</strong> ${anime.status}</p>
     <p><strong>Episodes:</strong> ${anime.episodes || "N/A"}</p>
     <p><strong>Genres:</strong> ${anime.genres.join(", ")}</p>
-    
-    <div class="modal-links">
-        <strong>Watch on:</strong><br>
-        ${generateLinksHTML(streamingLinks)}
-    </div>
-
-    <div class="modal-links" style="margin-top: 10px;">
-        <strong>Official & Social Links:</strong><br>
-        ${officialSite ? generateLinksHTML([officialSite]) : ""}
-        ${generateLinksHTML(socialLinks)}
-    </div>
-
+    <div class="modal-links"><strong>Watch on:</strong><br>${generateLinksHTML(streamingLinks)}</div>
+    <div class="modal-links" style="margin-top: 10px;"><strong>Official & Social Links:</strong><br>${officialSite ? generateLinksHTML([officialSite]) : ""} ${generateLinksHTML(socialLinks)}</div>
     <hr style="clear: both; border: none; margin-top: 10px;">
-    <p>${anime.description}</p>
+    <p class="synopsis">${anime.description}</p>
   `;
   modal.classList.add("active");
+
+  document
+    .querySelector(".favorite-btn-modal")
+    .addEventListener("click", () => {
+      const icon = document.querySelector(
+        `.favorite-icon[data-anime-id="${anime.id}"]`,
+      );
+      if (icon) {
+        icon.click();
+      } else {
+        // Handle favorite toggling when item is not on the main page (e.g., from favorites list)
+        let favsFromStorage =
+          JSON.parse(localStorage.getItem("favorites")) || [];
+        if (favorites.has(anime.id)) {
+          favorites.delete(anime.id);
+          favsFromStorage = favsFromStorage.filter(
+            (fav) => fav.id !== anime.id,
+          );
+        } else {
+          favorites.add(anime.id);
+          const animeToAdd = fullAnimeList.find((a) => a.id === anime.id);
+          if (animeToAdd) favsFromStorage.push(animeToAdd);
+        }
+        localStorage.setItem("favorites", JSON.stringify(favsFromStorage));
+      }
+      populateAndShowModal(anime); // Re-populate to update button text
+    });
 }
 
 function hideModal() {
@@ -110,16 +203,21 @@ function hideModal() {
 }
 
 function generateLinksHTML(links) {
-  if (!links || links.length === 0) {
-    return "<span>N/A</span>";
-  }
+  if (!links || links.length === 0) return "<span>N/A</span>";
   return links
     .map(
-      (link) => `
-        <a href="${link.url}" target="_blank" rel="noopener noreferrer">
-          ${link.icon ? `<img src="${link.icon}" alt="">` : ""}
-          ${link.site}
-        </a>`,
+      (link) =>
+        `<a href="${link.url}" target="_blank" rel="noopener noreferrer">${link.icon ? `<img src="${link.icon}" alt="">` : ""} ${link.site}</a>`,
     )
     .join("");
+}
+
+export function displayGenres(genres) {
+  const container = document.getElementById("genreFilters");
+  container.innerHTML = "<strong>Filter by Genre:</strong><br>";
+  genres.forEach((genre) => {
+    const checkbox = document.createElement("label");
+    checkbox.innerHTML = `<input type="checkbox" value="${genre}"> ${genre}`;
+    container.appendChild(checkbox);
+  });
 }

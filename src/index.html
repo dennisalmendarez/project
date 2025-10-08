@@ -6,7 +6,22 @@
     <title>Top 100 Trending Anime</title>
   </head>
   <body>
-    <h1>Top 100 Trending Anime</h1>
+    <header>
+      <div class="title-container">
+        <h1 id="trendingTitle" class="active">Top 100 Trending Anime</h1>
+        <h1 id="topTitle">Top 100 Anime</h1>
+      </div>
+      <div class="controls">
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="Search for an anime..."
+        />
+        <button id="top10Button">Show Top 10 Trending</button>
+        <button id="favoritesButton">My Favorites</button>
+      </div>
+      <div id="genreFilters" class="genre-filters"></div>
+    </header>
 
     <main id="animes">
       <div class="content">
@@ -15,7 +30,9 @@
         </div>
       </div>
     </main>
-
+    <footer>
+      <p>&copy; 2025 Anime Browser. All rights reserved.</p>
+    </footer>
     <div id="animeModal" class="modal-overlay">
       <div class="modal-content">
         <span class="close-button">&times;</span>
@@ -23,6 +40,6 @@
       </div>
     </div>
 
-    <script type="module" src="/js/main.js"></script>
+    <script type="module" src="js/main.js"></script>
   </body>
 </html>
