@@ -211,10 +211,10 @@ function renderCharacters(characters) {
     return;
   }
 
-  // Get main characters to avoid clutter, limit to 6
+  // Get main characters to avoid clutter, limit to 100 for aquaricity < (no idea of the right word)
   const mainCharacters = characters
     .filter((c) => c.role === "Main")
-    .slice(0, 6);
+    .slice(0, 100);
 
   const charactersHTML = mainCharacters
     .map((charData) => {
