@@ -1,3 +1,5 @@
+import { fetchAnimeCharacters } from "./api.js";
+
 let fullAnimeList = [];
 let favorites = new Set(
   JSON.parse(localStorage.getItem("favorites"))?.map((f) => f.id) || [],
@@ -143,7 +145,7 @@ function toggleFavorite(event) {
   localStorage.setItem("favorites", JSON.stringify(favsFromStorage));
 }
 
-function populateAndShowModal(anime) {
+async function populateAndShowModal(anime) {
   const streamingLinks = anime.externalLinks.filter((link) =>
     STREAMING_SITES.includes(link.site),
   );
@@ -167,8 +169,13 @@ function populateAndShowModal(anime) {
     <div class="modal-links" style="margin-top: 10px;"><strong>Official & Social Links:</strong><br>${officialSite ? generateLinksHTML([officialSite]) : ""} ${generateLinksHTML(socialLinks)}</div>
     <hr style="clear: both; border: none; margin-top: 10px;">
     <p class="synopsis">${anime.description}</p>
+    <div id="characters-container"><h3>Loading characters...</h3></div>
   `;
   modal.classList.add("active");
+
+  // Fetch and render characters after the modal is shown
+  const characters = await fetchAnimeCharacters(anime.id);
+  renderCharacters(characters);
 
   document
     .querySelector(".favorite-btn-modal")
@@ -179,7 +186,6 @@ function populateAndShowModal(anime) {
       if (icon) {
         icon.click();
       } else {
-        // Handle favorite toggling when item is not on the main page (e.g., from favorites list)
         let favsFromStorage =
           JSON.parse(localStorage.getItem("favorites")) || [];
         if (favorites.has(anime.id)) {
@@ -194,8 +200,38 @@ function populateAndShowModal(anime) {
         }
         localStorage.setItem("favorites", JSON.stringify(favsFromStorage));
       }
-      populateAndShowModal(anime); // Re-populate to update button text
+      populateAndShowModal(anime);
     });
+}
+
+function renderCharacters(characters) {
+  const container = document.getElementById("characters-container");
+  if (!characters || characters.length === 0) {
+    container.innerHTML = "<h3>Character information not available.</h3>";
+    return;
+  }
+
+  // Get main characters to avoid clutter, limit to 6
+  const mainCharacters = characters.filter(c => c.role === "Main").slice(0, 6);
+
+  const charactersHTML = mainCharacters.map(charData => {
+    const character = charData.character;
+    // Find the Japanese voice actor
+    const voiceActor = charData.voice_actors.find(va => va.language === "Japanese");
+
+    return `
+      <div class="character-card">
+        <img src="${character.images.webp.image_url}" alt="${character.name}">
+        <p><strong>${character.name}</strong></p>
+        ${voiceActor ? `<p class="va-name">VA: ${voiceActor.person.name}</p>` : ""}
+      </div>
+    `;
+  }).join("");
+
+  container.innerHTML = `
+    <h3>Main Characters</h3>
+    <div class="characters-grid">${charactersHTML}</div>
+  `;
 }
 
 function hideModal() {

@@ -1,4 +1,5 @@
 const API_URL = import.meta.env.VITE_API_URL;
+const API2_URL = import.meta.env.VITE_API2_URL;
 
 async function fetchAnime(
   page = 1,
@@ -93,4 +94,19 @@ async function fetchAllGenres() {
   }
 }
 
-export { fetchAnime, fetchAllGenres };
+async function fetchAnimeCharacters(animeId) {
+  // Uses the MyAnimeList ID if available, otherwise fallback to the AniList ID
+  const url = API2_URL.replace("{id}", animeId);
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      return [];
+    }
+    const jsonResponse = await response.json();
+    return jsonResponse.data;
+  } catch (error) {
+    return [];
+  }
+}
+
+export { fetchAnime, fetchAllGenres, fetchAnimeCharacters };
